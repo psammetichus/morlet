@@ -5,7 +5,7 @@ def main():
     try:
         with open("output.webeeg", "w") as outfile:
             outfile.write(hdf2webeeg.convert(argv[1]))
-    except e:
+    except:
         print "didn't work out"
         exit()
 

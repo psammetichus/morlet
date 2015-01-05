@@ -15,8 +15,7 @@ def convert(h5file):
     hdrsize += hdrsize % 8 #packed to 8-byte boundary
     hdr = struct.pack("4i%ds" % (NS*4), NS, 200, hdrsize,
                       NREC, 
-                      str("".join(
-                [l.ljust(4) for l in labels])))
+                      "".join([str(l.ljust(4)) for l in labels]))
     data = struct.pack("%dd" % (NS*NREC), 
                        *hstack(
             eegdata.h5file["data"].values()))
