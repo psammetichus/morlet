@@ -22,7 +22,7 @@ def saveEEGtoHDF(eegdata, filename):
     h5file = h5py.File(filename)
     g = h5file.create_group("data")
     for k,v in eegdata.items():
-        g.create_dataset(k, data=v)
+        g.create_dataset(k, data=v, compression='gzip')
     h5file.close()
 
 
