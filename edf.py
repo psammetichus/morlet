@@ -22,7 +22,9 @@ sor = ["Fz",
        "T3",
        "T4",
        "T5",
-       "T6"]
+       "T6",
+       "A1",
+       "A2"]
 
 def read_edf_header_preamble(stream):
     version = stream.read(8)
@@ -65,7 +67,7 @@ def getsignalinfo(stream, hdr):
         lbl = stream.read(16).rstrip()
         labels[i] = lbl
         channels[lbl] = dict()
-    for field, nbytes, f in [ ("tducer", 80, str), ("physDim", 8, str),
+    for field, nbytes, f in [ ("tducer", 80, str), ("physDim", 8, lambda(n): n.rstrip()),
                               ("physMin", 8, float), ("physMax", 8, float),
                               ("digMin", 8, int), ("digMax", 8, int),
                               ("prefilt", 80, str), ("nsamps", 8, int) ]:
@@ -80,16 +82,20 @@ def getsignalinfo(stream, hdr):
 
 def getsignals(stream, hdr):
     ch = hdr["chans"]
-    for i in hdr["chans"]:
-        i["data"] = np.zeroes(i["nsamps"]*hdr["NR"])
+    for i in ch.keys():
+        ch[i]["data"] = np.zeros(ch[i]["nsamps"]*hdr["NR"])
     for i in range(hdr["NR"]):
         for j in range(hdr["NS"]):
             c = ch[hdr["lbls"][j]]
-            rawdata = np.array(stream.read(c["nsamps"]*2), dtype=np.int8)
-            scaleF = float(1/c["digMax"])*c["physMax"]
-            c["data"][i*c["nsamps"]:(i+1)*c["nsamps"]] = scaleF * ((rawdata[::2].astype(np.int16) << 8) + rawdata[1::2])
+            rawdata = np.array(map(ord, stream.read(c["nsamps"]*2)), dtype=np.int8)
+            scaleF = 1.0/(c["digMax"]-c["digMin"])*(c["physMax"]-c["physMin"])
+            c["data"][i*c["nsamps"]:(i+1)*c["nsamps"]] = scaleF * ((rawdata[1::2].astype(np.int16) << 8) + rawdata[::2])
+    return hdr
 
-
+class Signal(object):
+    def __init__(self, samplingRate, data):
+        self.sampR = samplingRate
+        self.data = data
 
 def readFile(fname):
     fio = io.FileIO(fname, 'r')
@@ -101,7 +107,13 @@ def readFile(fname):
     hdr = getsignalinfo(stream, hdr)
     log.info("read sig info; starting to read signals")
     hdr = getsignals(stream, hdr)
-    return hdr
+    stream.close()
+    for lbl in hdr["chans"].keys():
+        if lbl not in sor:
+            del hdr["chans"][lbl]
+
+    return {lbl : Signal(othData["nsamps"]/hdr["rec_dur"], othData["data"]) for lbl, othData in hdr["chans"].items()}
+
 
 
 
