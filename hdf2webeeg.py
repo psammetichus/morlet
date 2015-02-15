@@ -1,4 +1,5 @@
 ###hdf2webeeg.py
+# converts HDF EEG files to an ad hoc webeeg format
 
 
 

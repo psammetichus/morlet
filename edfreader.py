@@ -1,3 +1,5 @@
+#reads in EDF files using biosig
+
 import biosig
 
 

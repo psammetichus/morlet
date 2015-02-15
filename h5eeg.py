@@ -1,3 +1,4 @@
+# an HDFEEG class for dealing with HDF EEG files
 import edfreader
 import h5py
 import scipy.signal as sgnn

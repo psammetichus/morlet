@@ -1,3 +1,4 @@
+#uses Pandas to save simple dict of arrays  as an hdf file
 import pandas as pd
 
 def convertArraysToFrame(dictOfArrays):

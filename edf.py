@@ -1,3 +1,4 @@
+#Python native reading of EDF files
 import io
 import datetime as dt
 import numpy as np

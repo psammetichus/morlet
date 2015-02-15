@@ -1,3 +1,4 @@
+#program for converting hdf eeg files into webeeg files
 import hdf2webeeg
 from sys import argv
 
