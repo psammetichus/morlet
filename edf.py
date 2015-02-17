@@ -88,9 +88,9 @@ def getsignals(stream, hdr):
     for i in range(hdr["NR"]):
         for j in range(hdr["NS"]):
             c = ch[hdr["lbls"][j]]
-            rawdata = np.array(map(ord, stream.read(c["nsamps"]*2)), dtype=np.int8)
+            rawdata = np.frombuffer(stream.read(c["nsamps"]*2), np.int16)
             scaleF = 1.0/(c["digMax"]-c["digMin"])*(c["physMax"]-c["physMin"])
-            c["data"][i*c["nsamps"]:(i+1)*c["nsamps"]] = scaleF * ((rawdata[1::2].astype(np.int16) << 8) + rawdata[::2])
+            c["data"][i*c["nsamps"]:(i+1)*c["nsamps"]] = scaleF * rawdata
     return hdr
 
 class Signal(object):
