@@ -3,7 +3,7 @@ import io
 import datetime as dt
 import numpy as np
 import logging
-
+from signal import Signal
 
 sor = ["Fz",
        "Fp1",
@@ -92,11 +92,6 @@ def getsignals(stream, hdr):
             scaleF = 1.0/(c["digMax"]-c["digMin"])*(c["physMax"]-c["physMin"])
             c["data"][i*c["nsamps"]:(i+1)*c["nsamps"]] = scaleF * rawdata
     return hdr
-
-class Signal(object):
-    def __init__(self, samplingRate, data):
-        self.sampR = samplingRate
-        self.data = data
 
 def readFile(fname):
     fio = io.FileIO(fname, 'r')
