@@ -3,7 +3,7 @@ import io
 import datetime as dt
 import numpy as np
 import logging
-
+from signal import Signal
 
 sor = ["Fz",
        "Fp1",
@@ -94,6 +94,7 @@ def getsignals(stream, hdr):
             c["data"][i*c["nsamps"]:(i+1)*c["nsamps"]] = scaleF * rawdata
     return hdr
 
+
 class Signal(object):
     def __init__(self, samplingRate, data):
         self.sampR = samplingRate
@@ -122,7 +123,6 @@ class AnnotationTable(object):
     def addAnnot(self, offsetT, note):
         pass
         
-    
 
 def readFile(fname):
     fio = io.FileIO(fname, 'r')
