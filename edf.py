@@ -25,7 +25,8 @@ sor = ["Fz",
        "T5",
        "T6",
        "A1",
-       "A2"]
+       "A2",
+       "EDF Annotations"]
 
 def read_edf_header_preamble(stream):
     version = stream.read(8)
@@ -88,15 +89,40 @@ def getsignals(stream, hdr):
     for i in range(hdr["NR"]):
         for j in range(hdr["NS"]):
             c = ch[hdr["lbls"][j]]
-            rawdata = np.array(map(ord, stream.read(c["nsamps"]*2)), dtype=np.int8)
+            rawdata = np.frombuffer(stream.read(c["nsamps"]*2), np.int16)
             scaleF = 1.0/(c["digMax"]-c["digMin"])*(c["physMax"]-c["physMin"])
-            c["data"][i*c["nsamps"]:(i+1)*c["nsamps"]] = scaleF * ((rawdata[1::2].astype(np.int16) << 8) + rawdata[::2])
+            c["data"][i*c["nsamps"]:(i+1)*c["nsamps"]] = scaleF * rawdata
     return hdr
 
 class Signal(object):
     def __init__(self, samplingRate, data):
         self.sampR = samplingRate
         self.data = data
+
+class Annotation(object):
+    def __init__(self, offsetT, note, annotTable):
+        self.table = annotTable
+        self.data = self.table.addAnnot(offsetT, note)
+
+
+class AnnotationTable(object):
+    def __init__(self, starttime):
+        self.table = dict()
+        self.epoch = starttime
+        self.index = dict()
+    
+    def getByTimeOffset(self, offsetT):
+        return self.table.get(offsetT, [])
+        
+    def getByTime(self, annotTime):
+        offset = annotTime - self.epoch
+        secOffset = offset.seconds + offset.microseconds/1.0e6
+        self.getByTimeOffset(secOffset)
+
+    def addAnnot(self, offsetT, note):
+        pass
+        
+    
 
 def readFile(fname):
     fio = io.FileIO(fname, 'r')
