@@ -1,5 +1,5 @@
 # converts EDF files to HDF files using biosig
-import edfreader as er
+import biosigpy as er
 from sys import argv
 import h5eeg
 
