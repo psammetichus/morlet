@@ -1,0 +1,3 @@
+[submodule "pyedf"]
+	path = pyedf
+	url = https://github.com/psammetichus/pyedf.git
