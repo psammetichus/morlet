@@ -18,6 +18,8 @@ class Signal(object):
         return self.data
     
     def getFiltData(self):
-        self.cache = sn.filtfilt(self.fcoeffs[0], self.fcoeffs[1], self.getRawData()) if self.cache is None
+        if self.cache is None:
+            self.cache = sn.filtfilt(self.fcoeffs[0], self.fcoeffs[1], self.getRawData())
         return self.cache
-            
+
+
