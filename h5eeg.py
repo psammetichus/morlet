@@ -3,25 +3,28 @@ import pyedflib as edf
 import h5py
 import scipy.signal as sgnn
 import numpy as np
+import uuid
 
 class HDFEEG (object):
     h5file = None
     
     def __init__(self, filename):
         self.h5file = h5py.File(filename)
-        self.g = h5file.create_group("data")
+        self.datagrp = h5file.create_group("data")
     def __getitem__(self, label):
         return self.h5file["data"][label].value
-    def get_NS(self):
-        return len(self.h5file["data"])
-    def get_labels(self):
-        return self.h5file["data"].keys()
-    def get_NRec(self):
-        dddd = self.h5file["data"]
-        return max([len(i) for i in dddd.values()])
-    def store_dataset(self, label, data):
-        self.g.create_dataset(label, data=data)
-
+    def get_recs(self):
+        return self.h5file.get("/data")
+    def store_dataset(self, labels, data, fs, annots, offset=0. ):
+        g = self.datagrp.create_group(uuid.uuid1().hex)
+        g.create_dataset("data", data=data)
+        g.create_dataset("labels", data=labels)
+        g.attrs['fs']=fs
+        g.attrs['offset'] = offset
+        g.create_dataset("annots", shape=(len(annots),), dtype=[('offset',
+            '<u8'), ('text', 'S64')], data=annots)
+        return g
+     
 
 OKlbls = [  "Fp1", "F3", "C3", "P3", "O1",
             "Fp2", "F4", "C4", "P4", "O2",
