@@ -1,5 +1,4 @@
 # an HDFEEG class for dealing with HDF EEG files
-import pyedflib as edf
 import h5py
 import scipy.signal as sgnn
 import numpy as np
@@ -24,29 +23,9 @@ class HDFEEG (object):
         g.create_dataset("annots", shape=(len(annots),), dtype=[('offset',
             '<u8'), ('text', 'S64')], data=annots)
         return g
+    def close(self):
+        self.h5file.close()
      
-
-OKlbls = [  "Fp1", "F3", "C3", "P3", "O1",
-            "Fp2", "F4", "C4", "P4", "O2",
-            "F7", "T3", "T5", "F8", "T4", "T6",
-            "Fz", "Cz", "Pz", "A1", "A2"]
-
-def saveEEGtoHDF(edf_file, filename):
-
-    rr = edf.EdfReader(edf_file)
-    samps = rr.getNSamples()[2]
-    chanlabels = enumerate(rr.getSignalLabels())
-    eegdata = dict()
-    
-
-    for i,l in chanlabels:
-        if rr.getLabel(i) in OKlbls:
-            eegdata[l] = rr.readSignal(i)
-
-    h5file = HDFEEG(filename)
-    for k, v in eegdata.items():
-        h5file.store_dataset(k, data=v)
-
 
 def filterEEG(eegdata, lpcutoff=0.7, hpcutoff=0.01):
     b,a = sgnn.butter(2, [hpcutoff, lpcutoff], btype='bandpass')
