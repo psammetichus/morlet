@@ -9,7 +9,7 @@ class HDFEEG (object):
     
     def __init__(self, filename):
         self.h5file = h5py.File(filename)
-        self.datagrp = h5file.create_group("data")
+        self.datagrp = self.h5file.create_group("data")
     def __getitem__(self, label):
         return self.h5file["data"][label].value
     def get_recs(self):
