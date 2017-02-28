@@ -20,7 +20,7 @@ def saveEEGtoHDF(edf_file, filename):
             eegdata[l] = rr.readSignal(i)
 
     h5file = h5eeg.HDFEEG(filename)
-    h5file.store_dataset(eegdata.keys(), h5eeg.np.hstack(eegdata.values()),
+    h5file.store_dataset(eegdata.keys(), h5eeg.np.vstack(eegdata.values()),
             rr.getSampleFrequency(2), [])
 
     h5file.close()

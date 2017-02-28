@@ -17,11 +17,12 @@ class HDFEEG (object):
     def store_dataset(self, labels, data, fs, annots, offset=0. ):
         g = self.datagrp.create_group(uuid.uuid1().hex)
         g.create_dataset("data", data=data)
-        g.create_dataset("labels", data=labels)
+        g.create_dataset("labels", dtype='S4', 
+                data=[bytes(i, 'utf8') for i in labels])
         g.attrs['fs']=fs
         g.attrs['offset'] = offset
         g.create_dataset("annots", shape=(len(annots),), dtype=[('offset',
-            '<u8'), ('text', 'S64')], data=annots)
+            '<u8'), ('text', 'S64')], data=[(j, bytes(i, 'utf8')) for (j,i) in annots])
         return g
     def close(self):
         self.h5file.close()
