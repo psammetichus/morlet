@@ -24,3 +24,9 @@ def stft(n, step, overlap):
         output[i] = np.vstack( (np.abs(o[:coeffs]), np.angle(o[:coeffs])) )
     return output
 
+def std_stft(data, fs):
+    """calculates STFT for a real array with default step size fs/2 and overlap
+    fs/4."""
+    return stft(data, fs/2., fs/4.)
+
+
