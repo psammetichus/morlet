@@ -13,5 +13,9 @@ class DisplayInfo (QObject):
         w, l = self._ratio[0]*x, self._ratio[1]*x
         return ( self._res[0]/w, self.res[1]/l )
 
+    @pyqtProperty(float)
+    def dots(self):
+        return dotsperCM()
+
 
 
