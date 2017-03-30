@@ -1,0 +1,19 @@
+EEG signals are stored as possibly-resampled ndarrays of electrode versus time
+sample along with the Fs.
+
+Montages are a channel matrix that describes the linear combination of leads for
+each channel along with individual filter settings (provided as normalized
+1/2cyc/samp) and polarities and colors.
+
+There will be a transformation that convers an EEG (trode x time) to a set of
+3-vecs representing spherical approx of electrode position vectors with time
+(trode x xyz x time).
+
+Preprocess EEGs with the STFTs to speed up spectrogram work.
+
+Can form linearization order by starting from polar (0,0) (long, colat) and
+completing each level-set ring from 0 to 2pi before going to next. Each ring is
+defined by z = r cos(phi) where phi is colat which for 10-20 system ranges over
+(0, pi/5, 2pi/5)
+
+
